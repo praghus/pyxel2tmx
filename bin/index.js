@@ -40,7 +40,7 @@ const encodeLayer = async (data) => await new Promise(
     )
 )
 
-async function handlePyxelFormat(pyxelMapFile, tmxMapFile) {
+async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
 
     const pyxel = fs.createReadStream(pyxelMapFile).pipe(unzipper.Parse({ forceStream: true }))
     const outputFilename = tmxMapFile || `${path.basename(pyxelMapFile, '.pyxel')}.tmx`
@@ -148,8 +148,8 @@ console.log(boxen(`${header}\n${line1}\n\n${important} ${line2}`, {
 
 const options = yargs
     .usage('Usage: -f <filename> -o <filename>')
-    .option('f', { alias: 'filename', describe: 'Pyxel edit project file *.pyxel', type: 'string', demandOption: true })
-    .option('o', { alias: 'output', describe: 'Output filename', type: 'string' })
+    .option('f', { alias: 'filename', describe: 'Input PyxelEdit project file in *.pyxel format', type: 'string', demandOption: true })
+    .option('o', { alias: 'output', describe: 'Custom filename for output *.tmx file', type: 'string' })
     .example('$0 pyxel2tmx -f map.pyxel')
     .example('$0 pyxel2tmx -f map.pyxel -o output.tmx')
     .epilog(`copyright © 2020 ${pjson.author}`)
@@ -157,8 +157,7 @@ const options = yargs
 
 const { filename, output } = options
 
-fs.access(filename, fs.constants.F_OK, err => {
-    err
-        ? console.error(chalk.redBright(`${filename} does not exist!`))
-        : handlePyxelFormat(filename, output)
-});
+fs.access(filename, fs.constants.F_OK, err => err
+    ? console.error(chalk.redBright(`${filename} does not exist!`))
+    : convertPyxel2Tmx(filename, output)
+);
