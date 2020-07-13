@@ -1,4 +1,4 @@
-# pyxel2tmx
+# pyxel2tmx  [![NPM Version](https://img.shields.io/npm/v/pyxel2tmx.svg?style=flat)](https://www.npmjs.org/package/pyxel2tmx)
 Tool for converting tiled maps from `*.pyxel` to `*.tmx` format.
 
 ## Getting started
