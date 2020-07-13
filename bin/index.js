@@ -152,7 +152,7 @@ const options = yargs
     .option('o', { alias: 'output', describe: 'Custom filename for output *.tmx file', type: 'string' })
     .example('$0 pyxel2tmx -f map.pyxel')
     .example('$0 pyxel2tmx -f map.pyxel -o output.tmx')
-    .epilog(`copyright © 2020 ${pjson.author}`)
+    .epilog('copyright © 2020 Piotr Praga')
     .argv;
 
 const { filename, output } = options
