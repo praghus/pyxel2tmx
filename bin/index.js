@@ -6,10 +6,10 @@ const zlib = require('zlib')
 const chalk = require('chalk')
 const boxen = require('boxen')
 const yargs = require('yargs')
-const rimraf = require("rimraf")
+const rimraf = require('rimraf')
 const builder = require('xmlbuilder')
 const unzipper = require('unzipper')
-const pjson = require('../package.json');
+const pjson = require('../package.json')
 const gm = require('gm').subClass({ imageMagick: true })
 
 const UID = () => '_' + Math.random().toString(36).substr(2, 9)
@@ -117,7 +117,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             .tile(`${tilesWide}x`)
             .geometry(`${tileWidth}x${tileHeight}`)
             .background('none')
-            .write(`tileset.png`, (err) => {
+            .write('tileset.png', (err) => {
                 if (!err) console.log(chalk.greenBright('✔ Written tileset image.'))
                 rimraf.sync(tmpPath)
             })
@@ -126,7 +126,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             fs.writeFileSync(outputFilename, tmx.end({ pretty: true }), 'utf-8')
             console.log(chalk.greenBright('✔ Written tilemap file.'))
         } catch (e) {
-            console.error(chalk.redBright(e));
+            console.error(chalk.redBright(e))
         }
 
     } else {
@@ -144,7 +144,7 @@ console.log(boxen(`${header}\n${line1}\n\n${important} ${line2}`, {
     margin: 1,
     borderStyle: 'round',
     borderColor: 'gray'
-}));
+}))
 
 const options = yargs
     .usage('Usage: -f <filename> -o <filename>')
@@ -153,11 +153,11 @@ const options = yargs
     .example('$0 pyxel2tmx -f map.pyxel')
     .example('$0 pyxel2tmx -f map.pyxel -o output.tmx')
     .epilog('copyright © 2020 Piotr Praga')
-    .argv;
+    .argv
 
 const { filename, output } = options
 
 fs.access(filename, fs.constants.F_OK, err => err
     ? console.error(chalk.redBright(`${filename} does not exist!`))
     : convertPyxel2Tmx(filename, output)
-);
+)

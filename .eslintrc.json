@@ -14,6 +14,8 @@
         "node/prefer-global/console": ["error", "always"],
         "node/prefer-global/process": ["error", "always"],
         "node/prefer-global/url-search-params": ["error", "always"],
-        "node/prefer-global/url": ["error", "always"]
+        "node/prefer-global/url": ["error", "always"],
+        "quotes": [2, "single", "avoid-escape"],
+        "semi": [2, "never"]
     }
 }
