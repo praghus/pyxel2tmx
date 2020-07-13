@@ -1,7 +1,5 @@
-# pyxel2tmx 
-
-### Pyxel ➔ Tmx converter
-Tool for converting tiled maps from "pyxel" to "tmx" format.
+# pyxel2tmx
+Tool for converting tiled maps from `*.pyxel` to `*.tmx` format.
 
 ## Getting started
 First download and install [ImageMagick](http://www.imagemagick.org/). In Mac OS X, you can simply use [Homebrew](http://mxcl.github.io/homebrew/) and do:
