@@ -30,3 +30,7 @@ pyxel2tmx -f filename.pyxel -o tiledmap.tmx
 
 - `-f`, `--filename` - Input PyxelEdit project file in `*.pyxel` format
 - `-o`, `--output` - Custom filename for output `*.tmx` file
+
+## License
+
+[MIT licensed](./LICENSE).
