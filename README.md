@@ -17,16 +17,16 @@ npm i -g pyxel2tmx
 ## Basic Usage
 
 ```bash
+# default
 pyxel2tmx -f filename.pyxel
-```
-or with custom output filename:
-```bash
+
+# or with custom output filename
 pyxel2tmx -f filename.pyxel -o tiledmap.tmx
 ```
 
 ## Options
 
-`pyxel2tmx` accepts the following options
+`pyxel2tmx` accepts the following options:
 
 - `-f`, `--filename` - Input PyxelEdit project file in `*.pyxel` format
 - `-o`, `--output` - Custom filename for output `*.tmx` file
