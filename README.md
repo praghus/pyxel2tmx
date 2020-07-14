@@ -14,7 +14,7 @@ For windows you can download ImageMagick from [here](https://www.imagemagick.org
 npm i -g pyxel2tmx
 ```
 ### OR
-If you are running npm 5.2.0 or higher, you can use pyxel2tmx with `npx` without installation:
+If you are running npm 5.2.0 or higher, you can use `pyxel2tmx` with `npx` without installation:
 
 ```bash
 npx pyxel2tmx -f filename.pyxel
