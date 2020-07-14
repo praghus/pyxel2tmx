@@ -31,7 +31,7 @@ const pad = (number, length) => {
     return str
 }
 
-const encodeLayer = async (data) => await new Promise(
+const encodeLayer = async data => await new Promise(
     (resolve, reject) => zlib.deflate(
         new Uint32Array(data),
         (err, buf) => !err
@@ -71,11 +71,14 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             tileset: { numTiles, tilesWide, tileWidth, tileHeight }
         } = docData
 
+        const w = width / tileWidth
+        const h = height / tileHeight
+
         const tmx = builder.create('map').att({
             ...tmxMapOptions,
             nextlayerid: numLayers + 1,
-            height: height / tileHeight,
-            width: width / tileWidth,
+            width: w,
+            height: h,
             tileheight: tileHeight,
             tilewidth: tileWidth,
         })
@@ -95,21 +98,27 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
                 height: (1 + Math.round(numTiles / tilesWide)) * tileHeight
             })
 
-
         await Promise.all(Object.values(layers).map(
             async ({ alpha, name, hidden, tileRefs }, id) => {
+                const layer = new Array(w * h).fill(0)
+                const getTileValue = index => index > 0 ? index + 1: 0
+
+                Object.keys(tileRefs).map(
+                    key => layer[key] = getTileValue(tileRefs[key].index)
+                )
+
                 tmx
                     .ele('layer', {
                         id,
                         name,
                         visible: !hidden,
                         opacity: alpha / 255,
-                        height: height / tileHeight,
-                        width: width / tileWidth
+                        width: w,
+                        height: h
                     })
-                    .ele('data', { encoding: 'base64', compression: 'zlib' }, await encodeLayer(
-                        Object.values(tileRefs).map(({ index }) => index > 0 ? index + 1 : 0)
-                    ))
+                    .ele('data', { encoding: 'base64', compression: 'zlib' }, 
+                        await encodeLayer(layer)
+                    )
             }))
 
         gm()
@@ -117,7 +126,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             .tile(`${tilesWide}x`)
             .geometry(`${tileWidth}x${tileHeight}`)
             .background('none')
-            .write('tileset.png', (err) => {
+            .write('tileset.png', err => {
                 if (!err) console.log(chalk.greenBright('✔ Written tileset image.'))
                 rimraf.sync(tmpPath)
             })
