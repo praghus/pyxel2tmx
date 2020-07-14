@@ -17,10 +17,10 @@ npm i -g pyxel2tmx
 ## Basic Usage
 
 ```bash
+# default
 pyxel2tmx -f filename.pyxel
-```
-or with custom output filename:
-```bash
+
+# or with custom output filename:
 pyxel2tmx -f filename.pyxel -o tiledmap.tmx
 ```
 
