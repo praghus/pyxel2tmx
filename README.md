@@ -1,5 +1,5 @@
 # pyxel2tmx [![NPM Version](https://img.shields.io/npm/v/pyxel2tmx.svg?style=flat)](https://www.npmjs.org/package/pyxel2tmx)
-Tool for converting tiled maps from `*.pyxel` to `*.tmx` format.
+Tool for converting tiled maps from [PyxelEdit](https://pyxeledit.com/) to [Tiled Map Editor](https://www.mapeditor.org/) format.
 
 ## Getting started
 First download and install [ImageMagick](http://www.imagemagick.org/). In Mac OS X, you can simply use [Homebrew](http://mxcl.github.io/homebrew/) and do:
