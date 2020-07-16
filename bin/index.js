@@ -67,6 +67,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
 
     !fs.existsSync(TMP_PATH) && fs.mkdirSync(TMP_PATH)
 
+    // Search the archive for the required files.
     for await (const entry of pyxel) {
         const fileName = entry.path
         if (fileName === 'docData.json') {
@@ -135,7 +136,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             })
         )
 
-        // Generate one tileset from multiple images.
+        // Generate tileset from multiple images.
         gm()
             .montage(`${TMP_PATH}/*.png`)
             .tile(`${tilesWide}x`)
