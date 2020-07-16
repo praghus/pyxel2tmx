@@ -12,9 +12,9 @@ const unzipper = require('unzipper')
 const pjson = require('../package.json')
 const gm = require('gm').subClass({ imageMagick: true })
 
-const TMP_PATH = '_' + Math.random().toString(36).substr(2, 9)
+const TMP_PATH = `_${Math.random().toString(36).substr(2, 9)}`
 
-const FLIPS = [
+const FLIPPED = [
     [0x00000000, 0xa0000000, 0xc0000000, 0x60000000],
     [0x80000000, 0xe0000000, 0x40000000, 0x20000000]
 ]
@@ -28,16 +28,21 @@ const TMX_MAP_OPTIONS = {
     infinite: false,
 }
 
-const pad = (number, length) => {
-    let str = `${number}`
-    while (str.length < length) str = `0${str}`
-    return str
-}
+/**
+ * Get tile value with flips and rotations.
+ * 
+ * @param {Object} tile - Pyxel tile definition
+ * @param {number} tile.index - Tile index value
+ * @param {number} tile.rot - Tile rotation value
+ * @param {boolean} tile.flipX - Tile flipX flag 
+ */
+const getTile = ({ index, rot, flipX }) => 1 + index + FLIPPED[flipX ? 1 : 0][rot]
 
-const getTile = ({index, flipX, rot}) => (
-    (index > 0 ? index + 1 : 0) + FLIPS[flipX ? 1 : 0][rot]
-)
-
+/**
+ * Encode and compress layer data.
+ * 
+ * @param {Array<number>} data - Layer data
+ */
 const encodeLayer = async data => await new Promise(
     (resolve, reject) => zlib.deflate(
         new Uint32Array(data),
@@ -47,6 +52,12 @@ const encodeLayer = async data => await new Promise(
     )
 )
 
+/**
+ * Convert from *.pyxel to *.tmx format.
+ * 
+ * @param {string} pyxelMapFile - Input fileanme
+ * @param {string} tmxMapFile - Output filename
+ */
 async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
 
     const pyxel = fs.createReadStream(pyxelMapFile).pipe(unzipper.Parse({ forceStream: true }))
@@ -54,18 +65,15 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
 
     let docData
 
-    if (!fs.existsSync(TMP_PATH)) {
-        fs.mkdirSync(TMP_PATH)
-    }
+    !fs.existsSync(TMP_PATH) && fs.mkdirSync(TMP_PATH)
 
     for await (const entry of pyxel) {
         const fileName = entry.path
-
         if (fileName === 'docData.json') {
             const content = await entry.buffer()
             docData = await JSON.parse(content.toString())
         } else if (fileName.match(/tile[0-9]+\.png/)) {
-            const newFileName = pad(parseInt(fileName.replace(/[^0-9]/g, '')), 8)
+            const newFileName = fileName.replace(/[^0-9]/g, '').padStart(8, '0')
             entry.pipe(fs.createWriteStream(`${TMP_PATH}/${newFileName}.png`))
         } else {
             entry.autodrain()
@@ -81,6 +89,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
         const w = width / tileWidth
         const h = height / tileHeight
 
+        // Create TMX map node.
         const tmx = builder.create('map').att({
             ...TMX_MAP_OPTIONS,
             nextlayerid: numLayers + 1,
@@ -90,6 +99,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             tilewidth: tileWidth,
         })
 
+        // Add tileset element into TMX node.
         tmx
             .ele('tileset', {
                 firstgid: 1,
@@ -105,14 +115,11 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
                 height: (1 + Math.round(numTiles / tilesWide)) * tileHeight
             })
 
+        // Parse and encode layers.
         await Promise.all(Object.values(layers).reverse().map(
             async ({ alpha, name, hidden, tileRefs }, id) => {
                 const layer = new Array(w * h).fill(0)
-
-                Object.keys(tileRefs).map(
-                    key => layer[key] = getTile(tileRefs[key])
-                )
-
+                Object.keys(tileRefs).map(key => layer[key] = getTile(tileRefs[key]))
                 tmx
                     .ele('layer', {
                         id,
@@ -125,8 +132,10 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
                     .ele('data', { encoding: 'base64', compression: 'zlib' },
                         await encodeLayer(layer)
                     )
-            }))
+            })
+        )
 
+        // Generate one tileset from multiple images.
         gm()
             .montage(`${TMP_PATH}/*.png`)
             .tile(`${tilesWide}x`)
@@ -137,15 +146,15 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
                 rimraf.sync(TMP_PATH)
             })
 
+        // Write to TMX file.
         try {
             fs.writeFileSync(outputFilename, tmx.end({ pretty: true }), 'utf-8')
             console.log(chalk.greenBright('✔ Written tilemap file.'))
         } catch (e) {
             console.error(chalk.redBright(e))
         }
-
     } else {
-        console.error('docData.json missing!')
+        console.error(chalk.redBright('docData.json not found!'))
     }
 }
 
