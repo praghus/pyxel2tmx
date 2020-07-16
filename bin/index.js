@@ -98,7 +98,7 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
                 height: (1 + Math.round(numTiles / tilesWide)) * tileHeight
             })
 
-        await Promise.all(Object.values(layers).map(
+        await Promise.all(Object.values(layers).reverse().map(
             async ({ alpha, name, hidden, tileRefs }, id) => {
                 const layer = new Array(w * h).fill(0)
                 const getTileValue = index => index > 0 ? index + 1: 0
