@@ -1,6 +1,6 @@
 {
   "name": "pyxel2tmx",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Tool for converting tiled maps from *.pyxel to *.tmx format.",
   "repository": {
     "type": "git",
