@@ -143,30 +143,31 @@ async function convertPyxel2Tmx(pyxelMapFile, tmxMapFile) {
             .geometry(`${tileWidth}x${tileHeight}`)
             .background('none')
             .write('tileset.png', err => {
-                if (!err) console.log(chalk.greenBright('✔ Written tileset image.'))
+                if (!err) console.log(chalk.green('✔', chalk.gray('Written'), chalk.greenBright.bold('tileset.png')))
                 rimraf.sync(TMP_PATH)
             })
 
         // Write to TMX file.
         try {
             fs.writeFileSync(outputFilename, tmx.end({ pretty: true }), 'utf-8')
-            console.log(chalk.greenBright('✔ Written tilemap file.'))
+            console.log(chalk.green('✔', chalk.gray('Written'), chalk.greenBright.bold(outputFilename)))
         } catch (e) {
             console.error(chalk.redBright(e))
         }
     } else {
         console.error(chalk.redBright('docData.json not found!'))
+        rimraf.sync(TMP_PATH)
     }
 }
 
-const header = chalk.whiteBright.bold.underline(`Pyxel ➔ Tmx converter v${pjson.version}`)
+const header = chalk.whiteBright.bold.underline(`PYXEL ➔ TMX converter v${pjson.version}`)
 const important = chalk.redBright('IMPORTANT:')
-const line1 = chalk.gray('tool for converting tiled maps from "pyxel" to "tmx" format.')
+const line1 = chalk.gray('Tool for converting tiled maps from "pyxel" to "tmx" format.')
 const line2 = chalk.white('"ImageMagic" must be installed for proper operation!')
 
 console.log(boxen(`${header}\n${line1}\n\n${important} ${line2}`, {
     padding: 1,
-    margin: 1,
+    margin: { bottom: 1 },
     borderStyle: 'round',
     borderColor: 'gray'
 }))
